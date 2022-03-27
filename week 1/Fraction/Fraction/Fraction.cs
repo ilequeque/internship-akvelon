@@ -6,8 +6,8 @@ namespace Fraction
 {
     class FractionClass
     {
-        readonly int Numerator;
-        readonly int Denominator;
+        private readonly int Numerator;
+        private readonly int Denominator;
 
         public FractionClass(int N, int D)
         {

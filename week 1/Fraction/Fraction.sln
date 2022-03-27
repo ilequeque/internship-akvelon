@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fraction", "Fraction\Fraction.csproj", "{E2818A9E-AE71-4723-BCA2-226208C7D004}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFraction", "TestFraction\TestFraction.csproj", "{0B54AA9D-F4AD-4D8A-8F6D-3822E013E227}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fraction_Tests", "TestFraction\Fraction_Tests.csproj", "{0B54AA9D-F4AD-4D8A-8F6D-3822E013E227}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
