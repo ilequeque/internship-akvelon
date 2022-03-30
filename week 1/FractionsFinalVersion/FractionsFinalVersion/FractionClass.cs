@@ -74,7 +74,10 @@ namespace Fraction
 
             return false;
         }
-
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Numerator, Denominator);
+        }
         public override bool Equals(object? obj)
         { 
             if (obj is FractionClass X && Numerator == X.Numerator && X.Denominator == Denominator && 
