@@ -13,7 +13,7 @@ namespace Fraction
         {
             if (D == 0)
             {
-                throw new ArgumentNullException(nameof(D), $"{D} cannot be zero.");
+                throw new DivideByZeroException();
             }
             this.Numerator = N; 
             this.Denominator = D;
@@ -52,8 +52,39 @@ namespace Fraction
                 else { j -= i; }
             return i;
         }
+        public static bool operator ==(FractionClass X, FractionClass Y)
+        {
+            FractionClass a = X.Normalization();
+            FractionClass b = Y.Normalization();
+            if (a.Numerator == b.Numerator && a.Denominator == b.Denominator && a.Numerator / a.Denominator == b.Numerator / b.Denominator)
+            {
+                return true;
+            }
 
+            return false;
+        }
+        public static bool operator !=(FractionClass X, FractionClass Y)
+        {
+            FractionClass a = X.Normalization();
+            FractionClass b = Y.Normalization();
+            if (a.Numerator != b.Numerator && a.Denominator != b.Denominator || a.Numerator/a.Denominator != b.Numerator/b.Denominator)
+            {
+                return true;
+            }
 
+            return false;
+        }
+
+        public override bool Equals(object? obj)
+        { 
+            if (obj is FractionClass X && Numerator == X.Numerator && X.Denominator == Denominator && 
+                Numerator / Denominator == X.Numerator / X.Denominator)
+            {
+                return true;
+            }
+
+            return false;
+        }
         public override string ToString()
         {
             int iPart = Numerator / Denominator;
@@ -62,7 +93,7 @@ namespace Fraction
             else
                 return string.Format("{0}/{1}", Numerator, Denominator);
         }
-        public object? GetRest()// остаток от выделения целой части
+        public object? GetRest()// remainder of the division
         {
             if (Numerator != Denominator)
             { return new FractionClass(Numerator % Denominator, Denominator); }
