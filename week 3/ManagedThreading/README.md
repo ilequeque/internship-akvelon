@@ -1,4 +1,4 @@
-﻿There are 10 (doesn`t matter, might be 5 or 20) dancers in a nightclub
+There are 10 (doesn`t matter, might be 5 or 20) dancers in a nightclub
 
 There are three types of music:
 
