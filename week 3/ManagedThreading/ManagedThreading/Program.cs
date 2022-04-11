@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ManagedThreading;
+using System;
 using System.Threading;
 
 namespace Threads
@@ -7,15 +8,13 @@ namespace Threads
     {
         static void Main()
         {
-            Thread t = new(new ThreadStart(WriteY));
-            t.Start();
-
-            for (int i = 0; i < 10; i++) Console.Write("X");
-
+            DataBase data = new DataBase();     // initial dataset: 10 dancers, 20 songs
+            var dancers = data.DancerList();
+            var playlist = data.PlayList();
+            
+            Club club = new(dancers.ToList(), playlist.ToList());
+            club.DanceOnMusic();
         }
-        public static void WriteY()
-        {
-            for (int i = 0; i < 10; i++) Console.Write("Y");
-        }
+        
     }
 }
