@@ -142,48 +142,6 @@ namespace Documentation
         /// </summary>
         /// <param name="methodName"></param>
         /// <returns></returns>
-        private MethodInfo GetMethodInfo(string methodName)
-           => typeof(T)
-               .GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
-
-        private ParameterInfo GetParamInfo(MethodInfo methodInfo, string paramName)
-            => methodInfo.GetParameters().FirstOrDefault(p => p.Name == paramName);
-
-        private ApiParamDescription GetApiParamDescription(ParameterInfo paramInfo, string paramName)
-        {
-            var fullParamDescription = DefaultParamDescription(paramName);
-
-            var paramDescription = paramInfo.GetCustomAttribute<ApiDescriptionAttribute>();
-            if (paramDescription != null)   // Parameter has description attribute
-                fullParamDescription.ParamDescription.Description = paramDescription.Description;
-
-            var paramIsRequired = paramInfo.GetCustomAttribute<ApiRequiredAttribute>();
-            if (paramIsRequired != null)    // Parameter has requiredness attribute
-                fullParamDescription.Required = paramIsRequired.Required;
-
-            var paramIntValidation = paramInfo.GetCustomAttribute<ApiIntValidationAttribute>();
-            if (paramIntValidation != null) // Parameter has int validation
-            {
-                fullParamDescription.MinValue = paramIntValidation.MinValue;
-                fullParamDescription.MaxValue = paramIntValidation.MaxValue;
-            }
-
-            return fullParamDescription;
-        }
-
-        private ApiParamDescription DefaultParamDescription(string paramName)
-            => new ApiParamDescription
-            {
-                ParamDescription = new CommonDescription(paramName),
-                Required = false,
-                MinValue = null,
-                MaxValue = null
-            };
-
-        private ApiMethodDescription DefaultApiMethodDescription(string methodName)
-            => new ApiMethodDescription
-            {
-                MethodDescription = new CommonDescription(methodName)
-            };
+       
     }
 }
