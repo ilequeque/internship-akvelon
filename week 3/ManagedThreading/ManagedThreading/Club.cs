@@ -28,7 +28,8 @@ namespace ManagedThreading
             while (Music.Count > 0)
             {
                 this.musicType = NextSong();
-                foreach(var temp in DancerList)
+                Thread.Sleep(1000);     //time to change song genre
+                foreach (var temp in DancerList)
                 {
                     Dance(temp, musicType);
                 }
@@ -39,7 +40,6 @@ namespace ManagedThreading
         {   
             Thread t = new(() => this.musicType = Next());
             t.Start();
-            Thread.Sleep(1000);     //time to change song genre
             return this.musicType;
         }
 
