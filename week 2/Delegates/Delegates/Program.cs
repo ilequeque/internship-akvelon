@@ -7,9 +7,9 @@ namespace Delegates
     {
         public static void Main(string[] args)
         {
-            Customer newCustomer = new("Jim", "Halpert", Level.New, "Brown str. 67, Imaginary City");
-            Customer smallCustomer = new("Dwight", "Schrute", Level.SmallOrdersPermanent, "Green str. 18, Imaginary City");
-            Customer largeCustomer = new("Pam", "Beesly", Level.LargeOrdersPermanent, "Potter str. 19, Imaginary City");
+            Customer newCustomer = new("Jim", "Halpert", Level.New, "Dunder Mifflin, Scranton");
+            Customer smallCustomer = new("Dwight", "Schrute", Level.SmallOrdersPermanent, "Dunder Mifflin, Electric City");
+            Customer largeCustomer = new("Pam", "Beesly", Level.LargeOrdersPermanent, "Dunder Mifflin, Scarnton");
 
             Order order1 = new(1, "January 18, 2022", 10000);
             Order order2 = new(2, "February 2, 2022", 123000);
