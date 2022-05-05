@@ -15,12 +15,12 @@ namespace Solution
             CheckInfoJson();
             GetPhotoUrls();
         }
-        public static void Downloader(string path)
+        public static async Task DownloaderAsync(string path)
         {
-            var client = new WebClient();  //have some problems with web client
+            var client = new HttpClient();  //have some problems with web client
             try
             {
-                client.DownloadFile(path, PhotosFilename);
+                var response = await client.GetAsync(path);
                 client.Dispose();
             }
             catch
@@ -37,7 +37,7 @@ namespace Solution
             }
             else
             {
-                Downloader(UrlPath);
+                DownloaderAsync(UrlPath);
             }
         }
 
