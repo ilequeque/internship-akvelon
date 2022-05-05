@@ -10,103 +10,102 @@ namespace Documentation
         public string GetApiDescription()
         {
             Type type = typeof(T);
-            var descriptionAttr = type.GetCustomAttribute<ApiDescriptionAttribute>();
-            if (descriptionAttr == null)
+            var description = type.GetCustomAttribute<ApiDescriptionAttribute>();
+            if (description == null)
                 return null;
 
-            return descriptionAttr.Description;
+            return description.Description;
         }
 
         public string[] GetApiMethodNames()
         {
             Type type = typeof(T);
-            var methodInfoArray = type.GetMethods(BindingFlags.Instance | BindingFlags.Public);
+            var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
 
-            var methodNames = new List<string>();
-            foreach (var methodInfo in methodInfoArray)
+            var names = new List<string>();
+            foreach (var method in methods)
             {
-                if (methodInfo.GetCustomAttribute<ApiMethodAttribute>() != null)
-                    methodNames.Add(methodInfo.Name);
+                if (method.GetCustomAttribute<ApiMethodAttribute>() != null)
+                    names.Add(method.Name);
             }
 
-            return methodNames.ToArray();
+            return names.ToArray();
         }
 
         public string GetApiMethodDescription(string methodName)
         {
-            var methodInfo = GetMethodInfo(methodName);
-            if (methodInfo == null)
-                return null;    // Method does not exist
+            Type type = typeof(T);
+            var method = type.GetMethod(methodName);
+            if (method == null) return null;
 
-            var methodDescription = methodInfo.GetCustomAttribute<ApiDescriptionAttribute>();
-            if (methodDescription == null)
-                return null;    // Method exists, but does not have description attribute  
+            var description = method.GetCustomAttribute<ApiDescriptionAttribute>();
 
-            return methodDescription.Description;
+            if (description == null) return null;
+            return description.Description;
         }
 
         public string[] GetApiMethodParamNames(string methodName)
         {
-            var methodInfo = GetMethodInfo(methodName);
-            if (methodInfo == null)
-                return null;    // Method does not exist
+            Type type = typeof(T);
+            var method = type.GetMethod(methodName);
+            if (method == null) return null;
 
-            var methodParams = methodInfo.GetParameters();
+            var ListOfParam = method.GetParameters();
 
-            var paramNames = new List<string>();
-            foreach (var paramInfo in methodParams)
+            var names = new List<string>();
+            foreach (var param in ListOfParam)
             {
-                paramNames.Add(paramInfo.Name);
+                names.Add(param.Name);
             }
 
-            return paramNames.ToArray();
+            return names.ToArray();
         }
 
         public string GetApiMethodParamDescription(string methodName, string paramName)
         {
-            var methodInfo = GetMethodInfo(methodName);
-            if (methodInfo == null)
-                return null;    // Method does not exist
+            Type type = typeof(T);
+            var method = type.GetMethod(methodName);
+            if (method == null) return null;
 
-            var paramInfo = GetParamInfo(methodInfo, paramName);
-            if (paramInfo == null)
-                return null;    // Parameter with paramName does not exist
+            var paramInfo = GetParamInfo(method, paramName);
+            if (paramInfo == null) return null;
 
-            var paramDescription = paramInfo.GetCustomAttribute<ApiDescriptionAttribute>();
-            if (paramDescription == null)
-                return null;    // Parameter does not have description attribute
+            var description = paramInfo.GetCustomAttribute<ApiDescriptionAttribute>();
+            if (description == null) return null;
 
-            return paramDescription.Description;
+            return description.Description;
         }
 
         public ApiParamDescription GetApiMethodParamFullDescription(string methodName, string paramName)
         {
-            var methodInfo = GetMethodInfo(methodName);
-            if (methodInfo == null)
-                return DefaultParamDescription(paramName);    // Method does not exist
+            Type type = typeof(T);
+            var method = type.GetMethod(methodName);
+            if (method == null)
+                return DefaultParamDescription(paramName);
 
-            var paramInfo = GetParamInfo(methodInfo, paramName);
-            if (paramInfo == null)
-                return DefaultParamDescription(paramName);    // Parameter with paramName does not exist
+            var paramInfo = GetParamInfo(method, paramName);
+            if (paramInfo == null) return DefaultParamDescription(paramName);
 
-            // At this point, method and parameter do exist          
             return GetApiParamDescription(paramInfo, paramName);
         }
 
         public ApiMethodDescription GetApiMethodFullDescription(string methodName)
         {
-            var methodInfo = GetMethodInfo(methodName);
-            if (methodInfo.GetCustomAttribute<ApiMethodAttribute>() == null)
+            Type type = typeof(T);
+            var method = type.GetMethod(methodName);
+            if (method == null) return null;
+
+            if (method.GetCustomAttribute<ApiMethodAttribute>() == null)
                 return null;    // ApiMethodAttribute is missing
 
             var fullMethodDescription = DefaultApiMethodDescription(methodName);
 
-            var description = methodInfo.GetCustomAttribute<ApiDescriptionAttribute>();
+            var description = method.GetCustomAttribute<ApiDescriptionAttribute>();
             if (description != null)
                 fullMethodDescription.MethodDescription.Description = description.Description;
 
             // Add parameters' descriptions
-            var paramInfoArray = methodInfo.GetParameters();
+            var paramInfoArray = method.GetParameters();
 
             var paramDescriptionArray = new List<ApiParamDescription>();
             foreach (var paramInfo in paramInfoArray)
@@ -117,11 +116,11 @@ namespace Documentation
             fullMethodDescription.ParamDescriptions = paramDescriptionArray.ToArray();
 
             // Add return description
-            if (methodInfo.ReturnType == typeof(void))
+            if (method.ReturnType == typeof(void))
                 fullMethodDescription.ReturnDescription = null;
             else
             {
-                var returnParamInfo = methodInfo.ReturnParameter;
+                var returnParamInfo = method.ReturnParameter;
                 var returnIntValidation = returnParamInfo.GetCustomAttribute<ApiIntValidationAttribute>();
 
                 var returnDescription = new ApiParamDescription
@@ -137,11 +136,45 @@ namespace Documentation
 
             return fullMethodDescription;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="methodName"></param>
-        /// <returns></returns>
-       
+
+        private ParameterInfo GetParamInfo(MethodInfo methodInfo, string paramName)
+            => methodInfo.GetParameters().FirstOrDefault(p => p.Name == paramName);
+
+        private ApiParamDescription DefaultParamDescription(string paramName)
+            => new ApiParamDescription
+            {
+                ParamDescription = new CommonDescription(paramName),
+                Required = false,
+                MinValue = null,
+                MaxValue = null
+            };
+
+        private ApiMethodDescription DefaultApiMethodDescription(string methodName)
+            => new ApiMethodDescription
+            {
+                MethodDescription = new CommonDescription(methodName)
+            };
+
+        private ApiParamDescription GetApiParamDescription(ParameterInfo paramInfo, string paramName)
+        {
+            var fullParamDescription = DefaultParamDescription(paramName);
+
+            var paramDescription = paramInfo.GetCustomAttribute<ApiDescriptionAttribute>();
+            if (paramDescription != null)   // Parameter has description attribute
+                fullParamDescription.ParamDescription.Description = paramDescription.Description;
+
+            var paramIsRequired = paramInfo.GetCustomAttribute<ApiRequiredAttribute>();
+            if (paramIsRequired != null)    // Parameter has requiredness attribute
+                fullParamDescription.Required = paramIsRequired.Required;
+
+            var paramIntValidation = paramInfo.GetCustomAttribute<ApiIntValidationAttribute>();
+            if (paramIntValidation != null) // Parameter has int validation
+            {
+                fullParamDescription.MinValue = paramIntValidation.MinValue;
+                fullParamDescription.MaxValue = paramIntValidation.MaxValue;
+            }
+
+            return fullParamDescription;
+        }
     }
 }
